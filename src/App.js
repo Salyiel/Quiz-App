@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import QuizList from './Components/QuizList';
+import Score from './Components/Score';
 
 const App = () => {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [score, setScore] = useState(0);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -16,7 +18,6 @@ const App = () => {
             type: 'multiple'
           }
         });
-        console.log('Questions:', response.data.results);
         setQuestions(response.data.results);
         setLoading(false);
       } catch (error) {
@@ -35,7 +36,12 @@ const App = () => {
   return (
     <div className="App container mx-auto p-4">
       <h1 className="text-3xl font-bold text-center mb-4">React Quiz App</h1>
-      {questions.length > 0 ? <QuizList questions={questions} /> : <div className="text-center text-lg">No questions available</div>}
+      <Score score={score} total={questions.length} />
+      {questions.length > 0 ? (
+        <QuizList questions={questions} setScore={setScore} />
+      ) : (
+        <div className="text-center text-lg">No questions available</div>
+      )}
     </div>
   );
 };

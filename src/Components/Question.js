@@ -6,7 +6,7 @@ const decodeHtml = (html) => {
   return txt.value;
 };
 
-const Question = ({ question }) => {
+const Question = ({ question, onAnswerSubmit }) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
   const handleOptionChange = (e) => {
@@ -15,7 +15,7 @@ const Question = ({ question }) => {
 
   const handleSubmit = () => {
     const isCorrect = selectedOption === question.correct_answer;
-    alert(isCorrect ? 'Correct!' : 'Incorrect!');
+    onAnswerSubmit(isCorrect);
     setSelectedOption(null);
   };
 

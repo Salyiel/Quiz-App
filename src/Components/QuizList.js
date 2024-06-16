@@ -1,12 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Question from './Question';
 
-const QuizList = ({ questions }) => {
+const QuizList = ({ questions, setScore }) => {
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+
+  const handleAnswerSubmit = (isCorrect) => {
+    if (isCorrect) {
+      setScore((prevScore) => prevScore + 1);
+    }
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
+    } else {
+      alert('Quiz finished! Your score: ' + isCorrect);
+    }
+  };
+
   return (
     <div className="quiz-list">
-      {questions.map((question, index) => (
-        <Question key={index} question={question} />
-      ))}
+      <Question
+        question={questions[currentQuestionIndex]}
+        onAnswerSubmit={handleAnswerSubmit}
+      />
     </div>
   );
 };
