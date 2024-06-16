@@ -8,6 +8,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [score, setScore] = useState(0);
+  const [quizCompleted, setQuizCompleted] = useState(false);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -30,6 +31,32 @@ const App = () => {
     fetchQuestions();
   }, []);
 
+  const resetQuiz = () => {
+    setQuestions([]);
+    setLoading(true);
+    setError(null);
+    setScore(0);
+    setQuizCompleted(false);
+    const fetchQuestions = async () => {
+      try {
+        const response = await axios.get('https://opentdb.com/api.php', {
+          params: {
+            amount: 10,
+            type: 'multiple'
+          }
+        });
+        setQuestions(response.data.results);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching questions:', error);
+        setError(error);
+        setLoading(false);
+      }
+    };
+
+    fetchQuestions();
+  };
+
   if (loading) return <div className="text-center text-lg">Loading...</div>;
   if (error) return <div className="text-center text-lg text-red-500">Error: {error.message}</div>;
 
@@ -37,10 +64,17 @@ const App = () => {
     <div className="App container mx-auto p-4">
       <h1 className="text-3xl font-bold text-center mb-4">React Quiz App</h1>
       <Score score={score} total={questions.length} />
-      {questions.length > 0 ? (
-        <QuizList questions={questions} setScore={setScore} />
+      {quizCompleted ? (
+        <div className="text-center">
+          <button
+            onClick={resetQuiz}
+            className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
+          >
+            Restart Quiz
+          </button>
+        </div>
       ) : (
-        <div className="text-center text-lg">No questions available</div>
+        questions.length > 0 && <QuizList questions={questions} setScore={setScore} setQuizCompleted={setQuizCompleted} />
       )}
     </div>
   );

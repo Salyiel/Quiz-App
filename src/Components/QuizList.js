@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Question from './Question';
 
-const QuizList = ({ questions, setScore }) => {
+const QuizList = ({ questions, setScore, setQuizCompleted }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   const handleAnswerSubmit = (isCorrect) => {
@@ -11,7 +11,7 @@ const QuizList = ({ questions, setScore }) => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
     } else {
-      alert('Quiz finished! Your score: ' + isCorrect);
+      setQuizCompleted(true);
     }
   };
 
