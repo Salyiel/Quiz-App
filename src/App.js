@@ -1,7 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import axiosRetry from 'axios-retry';
 import QuizList from './Components/QuizList';
 import Score from './Components/Score';
+
+// Configure axios to use retry logic
+axiosRetry(axios, {
+  retries: 3, // Number of retry attempts
+  retryCondition: (error) => {
+    // Retry on 429 status code or network errors
+    return error.response.status === 429 || axiosRetry.isNetworkOrIdempotentRequestError(error);
+  },
+  retryDelay: (retryCount) => {
+    // Exponential backoff delay
+    return axiosRetry.exponentialDelay(retryCount);
+  }
+});
 
 const App = () => {
   const [questions, setQuestions] = useState([]);
