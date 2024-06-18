@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import QuizList from './Components/QuizList';
 import Score from './Components/Score';
+import Navbar from './Components/NavBar';
 
 // Configure axios to use retry logic
 axiosRetry(axios, {
@@ -75,22 +77,35 @@ const App = () => {
   if (error) return <div className="text-center text-lg text-red-500">Error: {error.message}</div>;
 
   return (
-    <div className="App container mx-auto p-4">
-      <h1 className="text-3xl font-bold text-center mb-4">React Quiz App</h1>
-      <Score score={score} total={questions.length} />
-      {quizCompleted ? (
-        <div className="text-center">
-          <button
-            onClick={resetQuiz}
-            className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
-          >
-            Restart Quiz
-          </button>
+    <Router>
+      <div className="App">
+        <Navbar />
+        <div className="container mx-auto p-4">
+          <Switch>
+            <Route exact path="/">
+              <h1 className="text-3xl font-bold text-center mb-4">React Quiz App</h1>
+              <Score score={score} total={questions.length} />
+              {quizCompleted ? (
+                <div className="text-center">
+                  <button
+                    onClick={resetQuiz}
+                    className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
+                  >
+                    Restart Quiz
+                  </button>
+                </div>
+              ) : (
+                questions.length > 0 && <QuizList questions={questions} setScore={setScore} setQuizCompleted={setQuizCompleted} />
+              )}
+            </Route>
+            <Route path="/about">
+              <h1 className="text-3xl font-bold text-center mb-4">About This App</h1>
+              <p className="text-center text-lg">This is a simple quiz application built with React.</p>
+            </Route>
+          </Switch>
         </div>
-      ) : (
-        questions.length > 0 && <QuizList questions={questions} setScore={setScore} setQuizCompleted={setQuizCompleted} />
-      )}
-    </div>
+      </div>
+    </Router>
   );
 };
 
